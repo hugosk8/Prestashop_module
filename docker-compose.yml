@@ -2,17 +2,15 @@ services:
     prestashop:
         image: prestashop/prestashop:8.1.4
         container_name: prestashop
+        depends_on:
+            - mysql
         ports: 
             - "8080:80"
         environment:
-            DB_SERVER: mysql 
-            DB_NAME: prestashop 
-            DB_USER: root 
-            DB_PASSWORD: root 
-            PS_INSTALL_AUTO: 1 
-            PS_DOMAIN: localhost:8080 
-            PS_FOLDER_ADMIN: admin-dev
-            PS_FOLDER_INSTALL: install-dev 
+            DB_SERVER: mysql
+            DB_NAME: prestashop
+            DB_USER: prestashop
+            DB_PASSWORD: prestashop 
         volumes:
             - ./modules:/var/www/html/modules
             - prestashop_data:/var/www/html
@@ -25,6 +23,8 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: prestashop
+            MYSQL_USER: prestashop
+            MYSQL_PASSWORD: prestashop
         volumes:
             - mysql_data:/var/lib/mysql
 
