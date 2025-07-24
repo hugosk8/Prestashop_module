@@ -5,7 +5,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ExerciseDashboard extends Module {
+class Exercisedashboard extends Module {
     public function __construct() {
         $this->name = 'exercisedashboard';
         $this->tab = 'administration';
@@ -110,7 +110,24 @@ class ExerciseDashboard extends Module {
             'EXD_UPDATE_FREQUENCY' => Configuration::get('EXD_UPDATE_FREQUENCY'),
             'EXD_ENABLED' => Configuration::get('EXD_ENABLED'),
         ];
+        $helper->submit_action = 'submit_' . $this->name;
 
         return $helper->generateForm([$fields_form]);
+    }
+
+    public function fetchBitcoinprice() {
+        $url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur';
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+        $response = curl_exec($ch);
+
+        $data = json_decode($response, true);
+
+        if (isset($data['bitcoin']['eur'])) {
+            return $data['bitcoin']['eur'];
+        }
+        return null;
     }
 }
