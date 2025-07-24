@@ -21,11 +21,29 @@ class Exercisedashboard extends Module {
     }
     
     public function install() {
-        return parent::install();
+        return parent::install() && $this->installDb();
+    }
+
+    public function installDb() {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "exd_btc_price` (
+                `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `price` DECIMAL(20,6) NOT NULL,
+                `fetched_at` DATETIME NOT NULL,
+                PRIMARY KEY (`id`)
+            ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=utf8;
+        ";
+
+        return Db::getInstance()->Execute($sql);
     }
     
     public function uninstall() {
-        return parent::uninstall();
+        return parent::uninstall() && $this->uninstallDb();
+    }
+
+    public function uninstallDb() {
+        $sql = "DROP TABLE IF EXISTS `" . _DB_PREFIX_ . "exd_btc_price`";
+        return Db::getInstance()->Execute($sql);
     }
 
     public function getContent() {
@@ -37,6 +55,14 @@ class Exercisedashboard extends Module {
             Configuration::updateValue('EXD_ENABLED', Tools::getValue('EXD_ENABLED'));
 
             $output .= $this->displayConfirmation($this->l('Configuration sauvegardée.'));
+        }
+
+        $btc = $this->fetchBitcoinPrice();
+        if ($btc !== null) {
+            $this->saveBitcoinPrice($btc);
+            $output .= $this->displayConfirmation($this->l('Prix BTC sauvegardé : ' . $btc . '€'));
+        } else {
+            $output .= $this->displayError($this->l('Erreur lors de la récupération du prix BTC.'));
         }
 
         return $output . $this->renderForm();
@@ -129,5 +155,10 @@ class Exercisedashboard extends Module {
             return $data['bitcoin']['eur'];
         }
         return null;
+    }
+
+    public function saveBitcoinPrice($price) {
+        $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'exd_btc_price` (`price`, `fetched_at`) VALUES (' . (float)$price . ', NOW())';
+        return Db::getInstance()->execute($sql);
     }
 }
