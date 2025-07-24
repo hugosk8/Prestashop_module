@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>exercisedashboard</name>
+    <displayName>Exercice Dashboard</displayName>
+    <version>1.0.0</version>
+    <description>Un module d'exercice affichant des données depuis une API externe dans le dashboard.</description>
+    <author>Hugo Sauvage</author>
+    <tab>administration</tab>
+    <ps_versions_compliancy>
+        <min>1.7.0.0</min>
+        <max>8.9.9</max>
+    </ps_versions_compliancy>
+</module>
