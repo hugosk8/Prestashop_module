@@ -21,7 +21,9 @@ class Exercisedashboard extends Module {
     }
     
     public function install() {
-        return parent::install() && $this->installDb();
+        return parent::install() && 
+            $this->installDb() && 
+            $this->registerHook('displayDashboardTop');
     }
 
     public function installDb() {
@@ -141,7 +143,7 @@ class Exercisedashboard extends Module {
         return $helper->generateForm([$fields_form]);
     }
 
-    public function fetchBitcoinprice() {
+    public function fetchBitcoinPrice() {
         $url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur';
 
         $ch = curl_init();
@@ -160,5 +162,12 @@ class Exercisedashboard extends Module {
     public function saveBitcoinPrice($price) {
         $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'exd_btc_price` (`price`, `fetched_at`) VALUES (' . (float)$price . ', NOW())';
         return Db::getInstance()->execute($sql);
+    }
+
+    public function hookDisplayDashboardTop($params) {
+        $this->context->smarty->assign([
+            'message' => 'Bienvenue sur le dashboard natif !'
+        ]);
+        return $this->display($this->name, 'views/templates/admin/dashboard.tpl');
     }
 }

@@ -12,7 +12,7 @@ services:
             DB_USER: prestashop
             DB_PASSWORD: prestashop 
         volumes:
-            - ./modules:/var/www/html/modules
+            - ./modules:/var/www/html/modules 
             - prestashop_data:/var/www/html
 
     mysql:
